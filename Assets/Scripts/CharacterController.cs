@@ -6,11 +6,11 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float jumpForce;
-    [SerializeField] private float sideJumpForce;
     [SerializeField] private float fallSpeed;
     
     [Header("Raycast Parameters")]
-    [SerializeField] private Transform raycastOrigin;
+    [SerializeField] private Transform raycastOrigin1;
+    [SerializeField] private Transform raycastOrigin2;
     [SerializeField] private float raycastMaxDistance;
 
     private Rigidbody _rb;
@@ -19,7 +19,9 @@ public class CharacterController : MonoBehaviour
 
     private bool _isGrounded;
 
-    private const int LayerMask = 1 << 6;
+    private float _timerInAir;
+
+    private const int LayerMask = 1 << 6; // Ground Layer
 
     private const string HorizontalInput = "Horizontal", VerticalInput = "Vertical";
     private const string MouseInput = "Mouse X";
@@ -39,10 +41,10 @@ public class CharacterController : MonoBehaviour
         
         float mouseAxis = Input.GetAxisRaw(MouseInput);
         float jumpAxis = Input.GetAxisRaw(JumpInput);
-        
+
         CharacterMovement(horizontal, vertical);
         CharacterRotation(mouseAxis);
-        CharacterJump(jumpAxis, horizontal, vertical);
+        CharacterJump(jumpAxis);
         CharacterFall();
         
         CheckCharacterGrounded();
@@ -60,19 +62,29 @@ public class CharacterController : MonoBehaviour
         _rb.MoveRotation(_rb.rotation * deltaRotation);
     }
 
-    private void CharacterJump(float jumpAxis, float horizontal, float vertical)
+    private void CharacterJump(float jumpAxis)
     {
-        if (_isGrounded && jumpAxis != 0f) 
-            _rb.AddForce(transform.up * (jumpForce * jumpAxis) + (transform.forward * (sideJumpForce * vertical) + transform.right * (sideJumpForce * horizontal)).normalized, ForceMode.Impulse);
+        if(_isGrounded && jumpAxis != 0f)
+            _rb.AddForce(new Vector3(0f, jumpForce, 0f), ForceMode.Impulse);
     }
 
     private void CharacterFall()
     {
-        if(!_isGrounded) _rb.velocity -= new Vector3(0f, fallSpeed, 0f);
+        if(!_isGrounded)
+        {
+            _timerInAir += Time.fixedDeltaTime * 5f;
+            
+            _rb.velocity -= new Vector3(0f, fallSpeed * _timerInAir, 0f);
+        }
+        else
+        {
+            _timerInAir = 0f;
+        }
     }
     
     private void CheckCharacterGrounded()
     {
-        _isGrounded = Physics.Raycast(raycastOrigin.position, Vector3.down, out _, raycastMaxDistance, LayerMask);
+        _isGrounded = Physics.Raycast(raycastOrigin1.position, Vector3.down, out _, raycastMaxDistance, LayerMask)
+            || Physics.Raycast(raycastOrigin2.position, Vector3.down, out _, raycastMaxDistance, LayerMask);
     }
 }
