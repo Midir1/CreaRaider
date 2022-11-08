@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
+    [SerializeField] private Transform characterSpawn;
+    
     [Header("Character Parameters")]
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
@@ -50,6 +52,12 @@ public class CharacterController : MonoBehaviour
         CheckCharacterGrounded();
     }
 
+    public void RespawnPlayer()
+    {
+        transform.position = characterSpawn.position;
+        transform.rotation = characterSpawn.rotation;
+    }
+
     private void CharacterMovement(float horizontal, float vertical)
     {
         _rb.AddForce(transform.forward * vertical + transform.right * horizontal, ForceMode.Force);
@@ -64,21 +72,20 @@ public class CharacterController : MonoBehaviour
 
     private void CharacterJump(float jumpAxis)
     {
-        if(_isGrounded && jumpAxis != 0f)
-            _rb.AddForce(new Vector3(0f, jumpForce, 0f), ForceMode.Impulse);
+        if(_isGrounded && jumpAxis != 0f) _rb.AddForce(new Vector3(0f, jumpForce, 0f), ForceMode.Impulse);
     }
 
     private void CharacterFall()
     {
-        if(!_isGrounded)
+        switch (_isGrounded)
         {
-            _timerInAir += Time.fixedDeltaTime * 5f;
-            
-            _rb.velocity -= new Vector3(0f, fallSpeed * _timerInAir, 0f);
-        }
-        else
-        {
-            _timerInAir = 0f;
+            case false:
+                _timerInAir += Time.fixedDeltaTime * 5f;
+                _rb.velocity -= new Vector3(0f, fallSpeed * _timerInAir, 0f);
+                break;
+            default:
+                _timerInAir = 0f;
+                break;
         }
     }
     

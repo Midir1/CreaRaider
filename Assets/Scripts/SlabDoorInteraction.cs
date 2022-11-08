@@ -9,6 +9,5 @@ public class SlabDoorInteraction : MonoBehaviour
 
     //Methods Used For Animations Events
     [UsedImplicitly] public void OpenDoor() => door.SetBool(OnSlab, true);
-
     [UsedImplicitly] public void CloseDoor() => door.SetBool(OnSlab, false);
 }

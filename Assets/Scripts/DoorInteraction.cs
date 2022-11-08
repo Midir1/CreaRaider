@@ -13,11 +13,11 @@ public class DoorInteraction : MonoBehaviour
     private const string DoorAnimation = "DoorOpen";
     private const string KeyDoorTag = "KeyDoor";
     
-    private void FixedUpdate()
-    {
-        CheckDoorInRange();
-    }
+    private static readonly int OnSlab = Animator.StringToHash("OnSlab");
+    
+    private void FixedUpdate() => CheckDoorInRange();
 
+    // ReSharper disable Unity.PerformanceAnalysis
     private void CheckDoorInRange()
     {
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, raycastMaxDistance, LayerMask))
@@ -39,9 +39,12 @@ public class DoorInteraction : MonoBehaviour
         }
     }
 
-    private void OpenDoor(RaycastHit hit)
+    private static void OpenDoor(RaycastHit hit)
     {
-        hit.transform.gameObject.layer = DefaultLayer;                
-        hit.transform.GetComponentInParent<Animator>().Play(DoorAnimation);
+        hit.transform.gameObject.layer = DefaultLayer;
+
+        Animator animator = hit.transform.GetComponentInParent<Animator>();
+        animator.Play(DoorAnimation);
+        animator.SetBool(OnSlab, true);
     }
 }
