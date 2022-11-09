@@ -4,11 +4,14 @@ public class TriggerInteractions : MonoBehaviour
 {
     public static int NbKeys;
 
+    private Transform _spawnPoint;
+
     private CharacterController _character;
     
     private const string KeyTag = "Key", SlabTag = "Slab", TrappedSlabTag = "TrappedSlab", DeathTag = "Death";
     private const string OnSlabAnim = "OnSlab", OffSlabAnim = "OffSlab";
     private const string OnTrappedSlabAnim = "OnTrappedSlab", OffTrappedSlabAnim = "OffTrappedSlab";
+    private const string SpawnPoint = "SpawnPoint";
 
     private void Start() => _character = GetComponent<CharacterController>();
 
@@ -16,6 +19,7 @@ public class TriggerInteractions : MonoBehaviour
     {
         KeyInteraction(other);
         SlabInteraction(other, true);
+        SpawnPointInteraction(other);
         
         DeathTrigger(other);
     }
@@ -38,8 +42,18 @@ public class TriggerInteractions : MonoBehaviour
             other.GetComponentInParent<Animator>().Play(onSlab ? OnTrappedSlabAnim : OffTrappedSlabAnim);
     }
 
+    private void SpawnPointInteraction(Component other)
+    {
+        if (!other.CompareTag(SpawnPoint)) return;
+
+        other.gameObject.SetActive(false);
+        _spawnPoint = other.transform;
+
+        HelpManager.ZoneIndex++;
+    }
+
     private void DeathTrigger(Component other)
     {
-        if (other.CompareTag(DeathTag)) _character.RespawnPlayer();
+        if (other.CompareTag(DeathTag)) _character.RespawnPlayer(_spawnPoint);
     }
 }

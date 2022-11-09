@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
-    [SerializeField] private Transform characterSpawn;
-    
     [Header("Character Parameters")]
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
@@ -15,6 +13,8 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Transform raycastOrigin2;
     [SerializeField] private float raycastMaxDistance;
 
+    private LevelManager _levelManager;
+    
     private Rigidbody _rb;
 
     private Vector3 _rotationVelocity;
@@ -31,6 +31,7 @@ public class CharacterController : MonoBehaviour
 
     private void Start()
     {
+        _levelManager = FindObjectOfType<LevelManager>();
         _rb = GetComponent<Rigidbody>();
 
         _rotationVelocity = new Vector3(0f, rotationSpeed, 0f);
@@ -52,10 +53,12 @@ public class CharacterController : MonoBehaviour
         CheckCharacterGrounded();
     }
 
-    public void RespawnPlayer()
+    public void RespawnPlayer(Transform characterSpawn)
     {
         transform.position = characterSpawn.position;
         transform.rotation = characterSpawn.rotation;
+        
+        _levelManager.ResetLevel();
     }
 
     private void CharacterMovement(float horizontal, float vertical)
