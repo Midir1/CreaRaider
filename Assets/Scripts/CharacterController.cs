@@ -39,6 +39,8 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!LevelManager.LevelStarted) return;
+        
         float horizontal = Input.GetAxisRaw(HorizontalInput) * movementSpeed;
         float vertical = Input.GetAxisRaw(VerticalInput) * movementSpeed;
         

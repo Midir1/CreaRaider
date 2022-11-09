@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    public static bool LevelStarted;
+    
     [SerializeField] private List<GameObject> keys, rocks;
 
     public void ResetLevel()
@@ -10,6 +13,8 @@ public class LevelManager : MonoBehaviour
         ResetKeys();
         ResetTraps();
     }
+
+    [UsedImplicitly] public void StartLevel() => LevelStarted = true;
 
     private void ResetKeys()
     {

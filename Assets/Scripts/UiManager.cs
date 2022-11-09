@@ -11,6 +11,8 @@ public class UiManager : MonoBehaviour
 
     private void Update()
     {
+        if (!LevelManager.LevelStarted) return;
+        
         KeysUI();
         Timer();
     }

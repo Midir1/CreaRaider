@@ -17,6 +17,8 @@ public class HelpManager : MonoBehaviour
     
     private void Update()
     {
+        if (!LevelManager.LevelStarted) return;
+        
         if (!_isHelping && Input.GetButtonDown(HelpButton))
         {
             _isHelping = true;

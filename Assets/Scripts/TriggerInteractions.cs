@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TriggerInteractions : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class TriggerInteractions : MonoBehaviour
     private const string OnSlabAnim = "OnSlab", OffSlabAnim = "OffSlab";
     private const string OnTrappedSlabAnim = "OnTrappedSlab", OffTrappedSlabAnim = "OffTrappedSlab";
     private const string SpawnPoint = "SpawnPoint";
+    private const string FinishTag = "Finish";
 
     private void Start() => _character = GetComponent<CharacterController>();
 
@@ -22,6 +24,7 @@ public class TriggerInteractions : MonoBehaviour
         SpawnPointInteraction(other);
         
         DeathTrigger(other);
+        RestartLevel(other);
     }
 
     private void OnTriggerExit(Collider other) => SlabInteraction(other, false);
@@ -55,5 +58,14 @@ public class TriggerInteractions : MonoBehaviour
     private void DeathTrigger(Component other)
     {
         if (other.CompareTag(DeathTag)) _character.RespawnPlayer(_spawnPoint);
+    }
+
+    private void RestartLevel(Component other)
+    {
+        if (other.CompareTag(FinishTag))
+        {
+            LevelManager.LevelStarted = false;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 }
