@@ -7703,7 +7703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 60
-  rotationSpeed: 250
+  rotationSpeed: 500
   jumpForce: 20
   fallSpeed: 1.4
   raycastOrigin1: {fileID: 1218230860}
